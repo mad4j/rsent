@@ -1,13 +1,15 @@
 use clap::Parser;
+use entropy::Entropy;
 
 use std::fs::File;
 use std::io::{self, Read};
 
+mod entropy;
 mod index;
 mod mean;
 
-use mean::Mean;
 use index::Index;
+use mean::Mean;
 
 /// evaluate data randomness
 #[derive(Parser, Debug)]
@@ -20,7 +22,8 @@ struct Args {
     /// input data, sdtin if not specified
     input: Option<String>,
 
-    #[arg(short, long, default_value_t=false)]
+    /// treat input as a stream of bits
+    #[arg(short, long, default_value_t = false)]
     bit_flag: bool,
 }
 
@@ -36,6 +39,7 @@ fn main() {
     };
 
     let mut mean = Mean::new(args.bit_flag);
+    let mut entropy = Entropy::new(args.bit_flag);
 
     let mut buffer = Vec::new();
     reader
@@ -43,7 +47,8 @@ fn main() {
         .expect("Impossibile leggere i dati");
 
     mean.update(&buffer);
+    entropy.update(&buffer);
 
-    println!("{:.2}", mean.get_value());
-
+    println!("{:.6}", mean.get_value());
+    println!("{:.6}", entropy.get_value());
 }

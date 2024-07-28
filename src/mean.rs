@@ -7,7 +7,6 @@ pub struct Mean {
 }
 
 impl Index for Mean {
-
     fn new(bit_flag: bool) -> Self {
         Mean {
             bit_flag,
@@ -17,9 +16,8 @@ impl Index for Mean {
     }
 
     fn update(&mut self, bytes: &[u8]) {
-        
         self.counter += if self.bit_flag {
-            8*bytes.len()
+            8 * bytes.len()
         } else {
             bytes.len()
         } as u64;
@@ -29,8 +27,6 @@ impl Index for Mean {
         } else {
             bytes.into_iter().map(|&x| x as u32).sum()
         } as u64;
-
-        
     }
 
     fn get_value(&self) -> f64 {
